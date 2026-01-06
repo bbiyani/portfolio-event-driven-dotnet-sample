@@ -122,6 +122,32 @@ This scope is intentional to keep the focus on **design quality and engineering 
 
 ---
 
+## Infrastructure Deployment (Azure Verified Modules)
+
+The `infra/avm` folder contains subscription-scope Bicep templates built on **Azure Verified Modules (AVM)**. It provisions:
+
+- Resource Group
+- Key Vault
+- Storage Account
+- Cosmos DB (SQL API)
+- Service Bus
+- App Service Plan + App Service
+
+### Required permissions
+
+- **Contributor** (or higher) on the target subscription (or management group).
+- **Key Vault Contributor** or **Key Vault Administrator** on the resource group if you need to manage secrets after deployment.
+
+### Deploy locally
+
+```bash
+./deploy/infra-deploy.sh staging uksouth
+```
+
+The script uses `infra/avm/parameters/<environment>.bicepparam` and runs a subscription deployment before app deployment. For manual execution, see `infra/avm/README.md`.
+
+---
+
 ## Future Enhancements (Planned)
 
 - API Management (gateway, versioning)
