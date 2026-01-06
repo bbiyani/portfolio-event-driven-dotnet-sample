@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Pensions360.Api": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:64653;http://localhost:64654"
+    }
+  }
+}

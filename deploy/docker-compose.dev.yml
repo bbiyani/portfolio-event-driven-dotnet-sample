@@ -1,0 +1,51 @@
+services:
+  cosmos:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
+    container_name: cosmos
+    environment:
+      AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 3
+      AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: "true"
+    mem_limit: 3g
+    ports:
+      - "8081:8081"
+      - "10251-10255:10251-10255"
+    volumes:
+      - cosmosdata:/tmp/cosmos/appdata # persist Cosmos emulator data :contentReference[oaicite:2]{index=2}
+
+
+  api:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile-api  # or wherever you put it
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      Cosmos__ConnectionString: "${COSMOS_CONNECTION_STRING}"
+      Cosmos__Database: "PensionsDb"
+      Cosmos__PensionPotsContainer: "PensionPots"
+      Cosmos__CitizensContainer: "Citizens"
+      Storage__ConnectionString: "${STORAGE_CONNECTION_STRING}"
+      ServiceBus__ConnectionString: "${SERVICEBUS_CONNECTION_STRING}"
+      ConnectionStrings__SqlServerProviders: "${SQLSERVER_PROVIDERS}"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - cosmos
+    # optionally: add worker, azurite, sqlserver, etc.
+
+  worker:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile-worker
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      Cosmos__ConnectionString: "${COSMOS_CONNECTION_STRING}"
+      Cosmos__Database: "PensionsDb"
+      Cosmos__PensionPotsContainer: "PensionPots"
+      Cosmos__CitizensContainer: "Citizens"
+      Storage__ConnectionString: "${STORAGE_CONNECTION_STRING}"
+      ServiceBus__ConnectionString: "${SERVICEBUS_CONNECTION_STRING}"
+    depends_on:
+      - cosmos
+
+volumes:
+  cosmosdata:

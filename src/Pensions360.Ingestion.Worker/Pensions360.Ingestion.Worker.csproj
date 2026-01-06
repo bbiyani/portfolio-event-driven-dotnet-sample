@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MassTransit" Version="8.1.0" />
+    <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Pensions360.Application\Pensions360.Application.csproj" />
+    <ProjectReference Include="..\Pensions360.Infrastructure\Pensions360.Infrastructure.csproj" />
+    <ProjectReference Include="..\Pensions360.Shared.Messaging\Pensions360.Shared.Messaging.csproj" />
+  </ItemGroup>
+</Project>

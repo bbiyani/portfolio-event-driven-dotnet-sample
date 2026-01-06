@@ -1,0 +1,29 @@
+# ===========================
+# 1. Build stage
+# ===========================
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy solution file
+COPY ./Pensions360.sln ./
+
+COPY src/ ./src/
+
+# Restore only project files
+RUN dotnet restore Pensions360.sln
+
+# Copy the entire source tree
+COPY . .
+
+# Publish
+RUN dotnet publish src/Pensions360.Api/Pensions360.Api.csproj \
+    -c Debug -o /app/publish /p:UseAppHost=false
+
+# ===========================
+# 2. Runtime stage
+# ===========================
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+EXPOSE 8080
+ENTRYPOINT ["dotnet", "Pensions360.Api.dll"]

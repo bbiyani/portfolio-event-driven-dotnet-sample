@@ -1,0 +1,14 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY ./Pensions360.sln ./
+COPY src/  ./src/
+RUN dotnet restore Pensions360.sln
+
+RUN dotnet publish src/Pensions360.Ingestion.Worker/Pensions360.Ingestion.Worker.csproj \
+    -c Release -o /app/publish /p:UseAppHost=false
+
+FROM mcr.microsoft.com/dotnet/runtime:8.0 AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "Pensions360.Ingestion.Worker.dll"]
