@@ -8,6 +8,9 @@
     <PackageReference Include="MassTransit" Version="8.1.0" />
     <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.1.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageReference Include="Serilog.Enrichers.CorrelationId" Version="3.0.1" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pensions360.Application\Pensions360.Application.csproj" />
