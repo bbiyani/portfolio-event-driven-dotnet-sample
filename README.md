@@ -119,13 +119,51 @@ This scope is intentional to keep the focus on **design quality and engineering 
 - Azure Blob Storage
 - MassTransit
 - Docker & Docker Compose
+- Azure Key Vault (staging/production configuration)
+
+---
+
+## Configuration & Secrets
+
+### Local Development (Environment Variables / User Secrets)
+
+Local development keeps secrets out of source control by using **environment variables** or **user secrets**. The application expects the following configuration keys (these are used in `src/Pensions360.Infrastructure/DependencyInjection.cs`):
+
+- `Storage:ConnectionString`
+- `Cosmos:ConnectionString`
+- `ServiceBus:ConnectionString`
+
+Example (environment variables):
+
+```
+Storage__ConnectionString=UseDevelopmentStorage=true
+Cosmos__ConnectionString=AccountEndpoint=...
+ServiceBus__ConnectionString=Endpoint=sb://...
+```
+
+### Staging/Production (Azure Key Vault)
+
+In non-development environments, both the API and worker load secrets from **Azure Key Vault** using `DefaultAzureCredential`. Provide the Key Vault URI via:
+
+```
+KeyVault__Uri=https://<your-key-vault-name>.vault.azure.net/
+```
+
+#### Key Vault Secret Naming Conventions
+
+The Key Vault configuration provider maps `--` to `:` for hierarchical keys. Use the following naming scheme to map to the expected configuration keys:
+
+- `Storage--ConnectionString` → `Storage:ConnectionString`
+- `Cosmos--ConnectionString` → `Cosmos:ConnectionString`
+- `ServiceBus--ConnectionString` → `ServiceBus:ConnectionString`
+
+With this in place, the API and worker will read the same configuration keys in all environments while keeping secrets in Key Vault for staging/production.
 
 ---
 
 ## Future Enhancements (Planned)
 
 - API Management (gateway, versioning)
-- Azure Key Vault with Managed Identity
 - React front-end
 - CI/CD pipelines
 - Additional event consumers (notifications, ops, analytics)
