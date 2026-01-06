@@ -1,8 +1,25 @@
+using Azure.Identity;
 using MediatR;
 using Pensions360.Application.Pensions.Queries;
 using Pensions360.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.ConfigureAppConfiguration((context, config) =>
+{
+    if (!context.HostingEnvironment.IsDevelopment())
+    {
+        var builtConfig = config.Build();
+        var keyVaultUri = builtConfig["KeyVault:Uri"];
+
+        if (string.IsNullOrWhiteSpace(keyVaultUri))
+        {
+            throw new InvalidOperationException("KeyVault:Uri must be configured for staging/production environments.");
+        }
+
+        config.AddAzureKeyVault(new Uri(keyVaultUri), new DefaultAzureCredential());
+    }
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
